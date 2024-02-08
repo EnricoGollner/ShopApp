@@ -5,18 +5,15 @@ import 'package:shop/core/utils/config.dart';
 import 'package:shop/service/ihttp_service.dart';
 
 class HttpService implements IHttpService {
-  final String _baseUrl = Config.baseUrl;
-
   @override
-  Future get() {
-    // TODO: implement get
-    throw UnimplementedError();
+  Future get({required String uri}) async {
+    return await http.get(Uri.parse('${Config.baseUrl}$uri'));
   }
 
   @override
   Future post({required String bodyJson, required String uriPath}) async {
     final http.Response response = await http.post(
-      Uri.parse("$_baseUrl/$uriPath"), // we MUST finish the URI with .json
+      Uri.parse("${Config.baseUrl}/$uriPath"), // we MUST finish the URI with .json
       body: bodyJson,
     );
 

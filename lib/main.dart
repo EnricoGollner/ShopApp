@@ -7,7 +7,7 @@ import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/cart/views/cart_page.dart';
 import 'package:shop/orders/models/order_list.dart';
 import 'package:shop/store/viewModel/product/product_view_model.dart';
-import 'package:shop/store/views/orders_page.dart';
+import 'package:shop/orders/pages/orders_page.dart';
 import 'package:shop/store/views/product_detail_page.dart';
 import 'package:shop/store/views/products_management/product_add_page.dart';
 import 'package:shop/store/views/products_management/products_management_page.dart';
@@ -15,9 +15,8 @@ import 'package:shop/store/views/products_overview_page.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-Future<void> main() async {
-  await DotEnv().load(fileName: '.env');
-
+Future main() async {
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 

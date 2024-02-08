@@ -1,4 +1,4 @@
 abstract class IHttpService  {
-  Future get();
+  Future get({required String uri});
   Future post({required String bodyJson, required String uriPath});
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/core/components/custom_alert_dialog.dart';
 import 'package:shop/core/components/custom_text_field.dart';
 import 'package:shop/core/utils/decimal_text_input_formatter.dart';
 import 'package:shop/core/utils/formatters.dart';
@@ -26,9 +27,12 @@ class _ProductAddPageState extends State<ProductAddPage> {
   final FocusNode _descriptionFocus = FocusNode();
   final FocusNode _urlImageFocus = FocusNode();
 
+  bool _isLoading = false;
+
   @override
   void initState() {
-    _productListProvider = Provider.of<ProductViewModel>(context, listen: false);
+    _productListProvider =
+        Provider.of<ProductViewModel>(context, listen: false);
     _urlImageFocus.addListener(updateImage);
 
     super.initState();
@@ -74,81 +78,97 @@ class _ProductAddPageState extends State<ProductAddPage> {
           icon: const Icon(Icons.save),
         ),
       ]),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                CustomTextField(
-                  initialValue: _formData['name'],
-                  textInputAction: TextInputAction.next,
-                  autofocus: true,
-                  label: 'Name',
-                  validatorFunction: Validator.isRequired,
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_priceFocus),
-                  onSaved: (name) => _formData['name'] = name ?? '',
-                ),
-                const SizedBox(height: 10),
-                CustomTextField(
-                  initialValue: _formData['price'] == null ? '' : _formData['price'].toString(),
-                  focusNode: _priceFocus,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_descriptionFocus),
-                  onSaved: (price) => _formData['price'] = Formatters.currencyToDouble(price ?? '0'),
-                  prefix: 'R\$ ',
-                  label: 'Price',
-                  validatorFunction: Validator.isRequired,
-                  inputFormatters: [
-                    DecimalTextInputFormatter.signal,
-                    DecimalTextInputFormatter(),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                CustomTextField(
-                  initialValue: _formData['description'],
-                  focusNode: _descriptionFocus,
-                  onSaved: (description) => _formData['description'] = description?.trim() ?? '',
-                  label: 'Description',
-                  maxLines: 3,
-                  validatorFunction: (text) => Validator.isRequiredAndMinLength(text: text, minLength: 10),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: CustomTextField(
-                        keyboardType: TextInputType.url,
-                        focusNode: _urlImageFocus,
-                        textInputAction: TextInputAction.done,
-                        label: 'URL Image',
-                        validatorFunction: Validator.isValidImageUrl,
-                        controller: _urlImageController,
-                        onFieldSubmitted: (_) => _submitForm(),
-                        onSaved: (urlImage) => _formData['urlImage'] = urlImage?.trim() ?? '',
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        initialValue: _formData['name'],
+                        textInputAction: TextInputAction.next,
+                        autofocus: true,
+                        label: 'Name',
+                        validatorFunction: Validator.isRequired,
+                        onFieldSubmitted: (_) =>
+                            FocusScope.of(context).requestFocus(_priceFocus),
+                        onSaved: (name) => _formData['name'] = name ?? '',
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10, left: 10),
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(border: Border.all()),
-                      child: Visibility(
-                        visible: Validator.isValidImageUrl(_urlImageController.text) == null,
-                        replacement: const Center(
-                          child: Text('Inform the URL'),
-                        ),
-                        child: Image.network(_urlImageController.text),
+                      const SizedBox(height: 10),
+                      CustomTextField(
+                        initialValue: _formData['price'] == null
+                            ? ''
+                            : _formData['price'].toString(),
+                        focusNode: _priceFocus,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        onFieldSubmitted: (_) => FocusScope.of(context)
+                            .requestFocus(_descriptionFocus),
+                        onSaved: (price) => _formData['price'] =
+                            Formatters.currencyToDouble(price ?? '0'),
+                        prefix: 'R\$ ',
+                        label: 'Price',
+                        validatorFunction: Validator.isRequired,
+                        inputFormatters: [
+                          DecimalTextInputFormatter.signal,
+                          DecimalTextInputFormatter(),
+                        ],
                       ),
-                    ),
-                  ],
-                )
-              ],
+                      const SizedBox(height: 10),
+                      CustomTextField(
+                        initialValue: _formData['description'],
+                        focusNode: _descriptionFocus,
+                        onSaved: (description) => _formData['description'] =
+                            description?.trim() ?? '',
+                        label: 'Description',
+                        maxLines: 3,
+                        validatorFunction: (text) =>
+                            Validator.isRequiredAndMinLength(
+                                text: text, minLength: 10),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              keyboardType: TextInputType.url,
+                              focusNode: _urlImageFocus,
+                              textInputAction: TextInputAction.done,
+                              label: 'URL Image',
+                              validatorFunction: Validator.isValidImageUrl,
+                              controller: _urlImageController,
+                              onFieldSubmitted: (_) => _submitForm(),
+                              onSaved: (urlImage) => _formData['urlImage'] =
+                                  urlImage?.trim() ?? '',
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 10, left: 10),
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(border: Border.all()),
+                            child: Visibility(
+                              visible: Validator.isValidImageUrl(
+                                      _urlImageController.text) ==
+                                  null,
+                              replacement: const Center(
+                                child: Text('Inform the URL'),
+                              ),
+                              child: Image.network(_urlImageController.text),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -156,11 +176,29 @@ class _ProductAddPageState extends State<ProductAddPage> {
     setState(() {});
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      _productListProvider.saveProduct(_formData);
-      Navigator.pop(context);
+      setState(() => _isLoading = true);
+
+      try {
+        await _productListProvider.saveProduct(_formData);
+      } catch (error) {
+        if (mounted) {
+          return showDialog<void>(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialog(
+                title: 'Error ocurred',
+                contentText: 'Error ocurred when saving the product:\n${error.toString()}',
+              );
+            },
+          );
+        }
+      } finally {
+        setState(() => _isLoading = false);
+        if (mounted) Navigator.pop(context);
+      }
     }
   }
 }
