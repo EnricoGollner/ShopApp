@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/core/components/custom_snack_bar.dart';
 import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/core/components/app_drawer.dart';
+import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/store/viewModel/product/product_view_model.dart';
 import 'package:shop/store/views/products_management/components/product_item_card.dart';
 
@@ -43,8 +45,7 @@ class ProductsManagementPage extends StatelessWidget {
                       builder: (_) {
                         return AlertDialog(
                           title: const Text('Delete Product'),
-                          content:
-                              Text("Do you want to delete ${product.title}'?"),
+                          content: Text("Do you want to delete ${product.title}'?"),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
@@ -56,9 +57,15 @@ class ProductsManagementPage extends StatelessWidget {
                             ),
                           ],
                         );
-                      }).then((value) {
+                      }).then((value) async {
                     if (value ?? false) {
-                      productListProvider.deleteProduct(id: product.id);
+                      try {
+                        await Provider.of<ProductViewModel>(context).deleteProduct(productId: product.id);
+                        productListProvider.deleteProduct(productId: product.id);
+                      } on HTTPException catch (error){
+                        // ignore: use_build_context_synchronously
+                        showSnackBar(context, BoxSnackBar.error(message: error.toString()));
+                      }
                     }
                   }),
                 );

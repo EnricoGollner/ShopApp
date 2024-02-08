@@ -1,4 +1,3 @@
-
 import 'package:shop/cart/models/cart_item.dart';
 
 class Order {
@@ -13,4 +12,16 @@ class Order {
     required this.products,
     required this.date,
   });
+
+  factory Order.fromMap(String id, Map<String, dynamic> map) {
+    return Order(
+      id: id,
+      total: map['total'] as double,
+      products: (map['products'] as List)
+          .map<CartItem>(
+            (x) => CartItem.fromMap(x as Map<String, dynamic>),
+          ).toList(),
+      date: DateTime.parse(map['date']),
+    );
+  }
 }

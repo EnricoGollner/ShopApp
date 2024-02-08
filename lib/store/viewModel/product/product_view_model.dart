@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/service/http_service.dart';
 import 'package:shop/store/models/product.dart';
 
@@ -10,23 +11,21 @@ class ProductViewModel with ChangeNotifier {
   final List<Product> _items = [];
 
   List<Product> get items => [..._items];
-  List<Product> get favoriteItems =>
-      _items.where((item) => item.isFavorite).toList();
-  final HttpService _httpService = HttpService();
+  List<Product> get favoriteItems => _items.where((item) => item.isFavorite).toList();
+
+  final HTTPService _httpService = HTTPService();
 
   Future<void> loadProducts() async {
     _items.clear();
 
     final Response response = await _httpService.get(uri: 'products.json');
-    if (response.body == 'null') {
-      throw Exception('Error requesting list of products');
+    if (response.body == 'null' || response.statusCode >= 400) {
+      throw HTTPException(message: 'Error requesting list of products!', statusCode: response.statusCode);
     }
 
-    Map<String, dynamic> data = jsonDecode(response.body);
-    data.forEach((key, productData) {
+    jsonDecode(response.body).forEach((key, productData) {
       _items.add(Product.fromMap(key, productData));
     });
-
     notifyListeners();
   }
 
@@ -81,8 +80,22 @@ class ProductViewModel with ChangeNotifier {
     }
   }
 
-  void deleteProduct({required String id}) {
-    _items.removeWhere((product) => product.id == id);
-    notifyListeners();
+  Future<void> deleteProduct({required String productId}) async {
+    int index = _items.indexWhere((product) => product.id == productId);
+
+    if (index >= 0) {
+      final Product product = _items[index];
+
+      _items.removeWhere((product) => product.id == productId);
+      notifyListeners();
+
+      final Response response = await _httpService.delete(uri: '$productId.json');
+
+      if (response.statusCode >= 400) {
+        _items.insert(index, product);
+        notifyListeners();
+        throw HTTPException(message: 'Couldn´t delete the product ${product.title}', statusCode: response.statusCode);
+      }      
+    }
   }
 }

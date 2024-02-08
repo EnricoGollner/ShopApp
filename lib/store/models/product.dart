@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:shop/core/exceptions/http_exception.dart';
+import 'package:shop/service/http_service.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -17,9 +20,20 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavorite() {
+  void _toggleFavorite() {
     isFavorite = !isFavorite;
     notifyListeners();
+  }
+
+  Future<void> toggleFavorite() async {
+    _toggleFavorite();
+    
+    final Response response = await HTTPService().delete(uri: '$id.json');
+
+    if (response.statusCode >= 400) {
+      _toggleFavorite();
+      throw HTTPException(message: "Couldn't add this product to your favorites list", statusCode: response.statusCode);
+    }
   }
 
   Product copyWith({

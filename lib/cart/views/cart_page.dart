@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/cart/viewModel/cart_view_model.dart';
 import 'package:shop/core/utils/formatters.dart';
-import 'package:shop/orders/models/order_list.dart';
+import 'package:shop/orders/viewModel/order_view_model.dart';
 import 'package:shop/cart/views/components/cart_item_card.dart';
 
 class CartPage extends StatelessWidget {
@@ -39,26 +39,13 @@ class CartPage extends StatelessWidget {
                         label: Text(
                           Formatters.doubleToCurrency(cartProvider.totalAmount),
                           style: TextStyle(
-                              color: Theme.of(context)
-                                  .primaryTextTheme
-                                  .headlineSmall
-                                  ?.color),
+                            color: Theme.of(context).primaryTextTheme.headlineSmall?.color,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Provider.of<OrderViewModel>(context, listen: false).addOrder(cartProvider);
-                      cartProvider.clear();
-                    },
-                    child: Text(
-                      'COMPRAR',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
+                  CardButton(cartProvider: cartProvider),
                 ],
               ),
             ),
@@ -70,6 +57,40 @@ class CartPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CardButton extends StatefulWidget {
+  const CardButton({
+    super.key,
+    required this.cartProvider,
+  });
+
+  final CartViewModel cartProvider;
+
+  @override
+  State<CardButton> createState() => _CardButtonState();
+}
+
+class _CardButtonState extends State<CardButton> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading ? const CircularProgressIndicator() : TextButton(
+      onPressed: widget.cartProvider.items.isEmpty ? null : () async {
+        setState(() => _isLoading = true);
+        await Provider.of<OrderViewModel>(context, listen: false).addOrder(widget.cartProvider);
+        widget.cartProvider.clear();
+        setState(() => _isLoading = false);
+      },
+      child: Text(
+        'COMPRAR',
+        style: TextStyle(
+          color: Theme.of(context).primaryColor,
+        ),
       ),
     );
   }

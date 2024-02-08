@@ -24,12 +24,13 @@ class ProductGridItemCard extends StatelessWidget {
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
                 color: Theme.of(context).colorScheme.secondary,
               ),
-              onPressed: () {
-                product.toggleFavorite();
-                showSnackBar(
-                  context,
-                  const BoxSnackBar.success(message:'Product added successfully to the favorite products list!'),
-                );
+              onPressed: () async {
+                await product.toggleFavorite().catchError((error) {
+                  showSnackBar(
+                    context,
+                    BoxSnackBar.error(message: error.toString()),
+                  );
+                });
               },
             ),
           ),

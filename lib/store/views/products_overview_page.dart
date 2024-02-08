@@ -43,8 +43,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
             onSelected: (FilterOptions selectedValue) {
-              setState(() =>
-                  _showFavoriteOnly = selectedValue == FilterOptions.favorite);
+              setState(() => _showFavoriteOnly = selectedValue == FilterOptions.favorite);
             },
             itemBuilder: (context) => [
               const PopupMenuItem(
