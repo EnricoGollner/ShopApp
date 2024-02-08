@@ -39,7 +39,7 @@ class _OrderCardState extends State<OrderCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            product.name,
+                            product.title,
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                           ),
                           Text(

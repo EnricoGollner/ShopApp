@@ -6,7 +6,7 @@ import 'package:shop/core/theme/styles.dart';
 import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/cart/views/cart_page.dart';
 import 'package:shop/orders/viewModel/order_view_model.dart';
-import 'package:shop/store/viewModel/product/product_view_model.dart';
+import 'package:shop/store/viewModel/product_view_model.dart';
 import 'package:shop/orders/views/orders_page.dart';
 import 'package:shop/store/views/product_detail_page.dart';
 import 'package:shop/store/views/products_management/product_add_page.dart';

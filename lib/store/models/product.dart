@@ -1,5 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+
 import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/service/http_service.dart';
 
@@ -27,12 +31,14 @@ class Product with ChangeNotifier {
 
   Future<void> toggleFavorite() async {
     _toggleFavorite();
-    
+
     final Response response = await HTTPService().delete(uri: '$id.json');
 
     if (response.statusCode >= 400) {
       _toggleFavorite();
-      throw HTTPException(message: "Couldn't add this product to your favorites list", statusCode: response.statusCode);
+      throw HTTPException(
+          message: "Couldn't add this product to your favorites list",
+          statusCode: response.statusCode);
     }
   }
 
@@ -54,6 +60,17 @@ class Product with ChangeNotifier {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'urlImage': urlImage,
+      'isFavorite': isFavorite,
+    };
+  }
+
   factory Product.fromMap(String id, Map<String, dynamic> map) {
     return Product(
       id: id,
@@ -61,7 +78,7 @@ class Product with ChangeNotifier {
       description: map['description'] as String,
       price: map['price'] as double,
       urlImage: map['urlImage'] as String,
-      isFavorite: map['isFavorite'] as bool,
+      isFavorite: map['isFavorite'] ?? false,
     );
   }
 }

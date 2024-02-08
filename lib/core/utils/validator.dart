@@ -17,7 +17,7 @@ class Validator {
     return null;
   }
 
-  static String? isValidImageUrl(String? urlText) {
+  static String? isValidUrlImage(String? urlText) {
     String? message = isRequired(urlText);
     if (message != null) {
       return message;

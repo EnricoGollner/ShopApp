@@ -6,7 +6,7 @@ import 'package:shop/core/utils/decimal_text_input_formatter.dart';
 import 'package:shop/core/utils/formatters.dart';
 import 'package:shop/core/utils/validator.dart';
 import 'package:shop/store/models/product.dart';
-import 'package:shop/store/viewModel/product/product_view_model.dart';
+import 'package:shop/store/viewModel/product_view_model.dart';
 
 class ProductAddPage extends StatefulWidget {
   const ProductAddPage({super.key});
@@ -16,10 +16,10 @@ class ProductAddPage extends StatefulWidget {
 }
 
 class _ProductAddPageState extends State<ProductAddPage> {
-  late ProductViewModel _productListProvider;
+  late ProductViewModel _productViewModel;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> _formData = <String, Object>{};
+  Map<String, dynamic> _formData = <String, Object>{};
 
   final TextEditingController _urlImageController = TextEditingController();
 
@@ -31,8 +31,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
 
   @override
   void initState() {
-    _productListProvider =
-        Provider.of<ProductViewModel>(context, listen: false);
+    _productViewModel = Provider.of<ProductViewModel>(context, listen: false);
     _urlImageFocus.addListener(updateImage);
 
     super.initState();
@@ -44,12 +43,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
       final argument = ModalRoute.of(context)?.settings.arguments;
 
       if (argument != null) {
-        final product = argument as Product;
-        _formData['id'] = product.id;
-        _formData['name'] = product.title;
-        _formData['price'] = product.price;
-        _formData['description'] = product.description;
-        _formData['urlImage'] = product.urlImage;
+        final Product product = argument as Product;
+        
+        _formData = product.toMap();
+
         _urlImageController.text = _formData['urlImage'];
       }
     }
@@ -90,14 +87,14 @@ class _ProductAddPageState extends State<ProductAddPage> {
                   child: Column(
                     children: [
                       CustomTextField(
-                        initialValue: _formData['name'],
+                        initialValue: _formData['title'],
                         textInputAction: TextInputAction.next,
                         autofocus: true,
-                        label: 'Name',
+                        label: 'Title',
                         validatorFunction: Validator.isRequired,
                         onFieldSubmitted: (_) =>
                             FocusScope.of(context).requestFocus(_priceFocus),
-                        onSaved: (name) => _formData['name'] = name ?? '',
+                        onSaved: (title) => _formData['title'] = title ?? '',
                       ),
                       const SizedBox(height: 10),
                       CustomTextField(
@@ -140,7 +137,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                               focusNode: _urlImageFocus,
                               textInputAction: TextInputAction.done,
                               label: 'URL Image',
-                              validatorFunction: Validator.isValidImageUrl,
+                              validatorFunction: Validator.isValidUrlImage,
                               controller: _urlImageController,
                               onFieldSubmitted: (_) => _submitForm(),
                               onSaved: (urlImage) => _formData['urlImage'] =
@@ -153,9 +150,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                             height: 100,
                             decoration: BoxDecoration(border: Border.all()),
                             child: Visibility(
-                              visible: Validator.isValidImageUrl(
-                                      _urlImageController.text) ==
-                                  null,
+                              visible: Validator.isValidUrlImage(_urlImageController.text) == null,
                               replacement: const Center(
                                 child: Text('Inform the URL'),
                               ),
@@ -182,7 +177,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
       setState(() => _isLoading = true);
 
       try {
-        await _productListProvider.saveProduct(_formData);
+        await _productViewModel.saveProduct(_formData);
       } catch (error) {
         if (mounted) {
           return showDialog<void>(

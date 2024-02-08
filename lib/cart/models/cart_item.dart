@@ -1,14 +1,14 @@
 class CartItem {
   final String id;
   final String productId;
-  final String name;
+  final String title;
   final int quantity;
   final double price;
 
   CartItem({
     required this.id,
     required this.productId,
-    required this.name,
+    required this.title,
     required this.quantity,
     required this.price,
   });
@@ -16,14 +16,14 @@ class CartItem {
   CartItem copyWith({
     String? id,
     String? productId,
-    String? name,
+    String? title,
     int? quantity,
     double? price,
   }) {
     return CartItem(
       id: id ?? this.id,
       productId: productId ?? this.productId,
-      name: name ?? this.name,
+      title: title ?? this.title,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
     );
@@ -33,7 +33,7 @@ class CartItem {
     return <String, dynamic>{
       'id': id,
       'productId': productId,
-      'name': name,
+      'title': title,
       'quantity': quantity,
       'price': price,
     };
@@ -43,7 +43,7 @@ class CartItem {
     return CartItem(
       id: map['id'] as String,
       productId: map['productId'] as String,
-      name: map['name'] as String,
+      title: map['title'] as String,
       quantity: map['quantity'] as int,
       price: map['price'] as double,
     );

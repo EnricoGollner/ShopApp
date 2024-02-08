@@ -4,7 +4,7 @@ import 'package:shop/core/components/custom_snack_bar.dart';
 import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/core/components/app_drawer.dart';
 import 'package:shop/core/exceptions/http_exception.dart';
-import 'package:shop/store/viewModel/product/product_view_model.dart';
+import 'package:shop/store/viewModel/product_view_model.dart';
 import 'package:shop/store/views/products_management/components/product_item_card.dart';
 
 class ProductsManagementPage extends StatelessWidget {
@@ -29,23 +29,27 @@ class ProductsManagementPage extends StatelessWidget {
         child: Consumer<ProductViewModel>(
           builder: (context, productListProvider, child) {
             return ListView.separated(
-              separatorBuilder: (context, index) => const Divider(color: Colors.grey, thickness: 1),
+              separatorBuilder: (context, index) =>
+                  const Divider(color: Colors.grey, thickness: 1),
               itemCount: productListProvider.items.length,
               itemBuilder: (context, index) {
                 final product = productListProvider.items[index];
 
                 return ProductItemCard(
-                  imageUrl: product.urlImage,
+                  urlImage: product.urlImage,
                   title: product.title,
                   onEdit: () => Navigator.pushNamed(
-                      context, AppRoutes.PRODUCTS_ADD,
-                      arguments: product),
+                    context,
+                    AppRoutes.PRODUCTS_ADD,
+                    arguments: product,
+                  ),
                   onDelete: () async => await showDialog(
                       context: context,
                       builder: (_) {
                         return AlertDialog(
                           title: const Text('Delete Product'),
-                          content: Text("Do you want to delete ${product.title}'?"),
+                          content:
+                              Text("Do you want to delete ${product.title}'?"),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
@@ -60,11 +64,14 @@ class ProductsManagementPage extends StatelessWidget {
                       }).then((value) async {
                     if (value ?? false) {
                       try {
-                        await Provider.of<ProductViewModel>(context).deleteProduct(productId: product.id);
-                        productListProvider.deleteProduct(productId: product.id);
-                      } on HTTPException catch (error){
+                        await Provider.of<ProductViewModel>(context)
+                            .deleteProduct(productId: product.id);
+                        productListProvider.deleteProduct(
+                            productId: product.id);
+                      } on HTTPException catch (error) {
                         // ignore: use_build_context_synchronously
-                        showSnackBar(context, BoxSnackBar.error(message: error.toString()));
+                        showSnackBar(context,
+                            BoxSnackBar.error(message: error.toString()));
                       }
                     }
                   }),
