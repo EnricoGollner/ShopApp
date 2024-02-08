@@ -10,7 +10,8 @@ class ProductViewModel with ChangeNotifier {
   final List<Product> _items = [];
 
   List<Product> get items => [..._items];
-  List<Product> get favoriteItems => _items.where((item) => item.isFavorite).toList();
+  List<Product> get favoriteItems =>
+      _items.where((item) => item.isFavorite).toList();
   final HttpService _httpService = HttpService();
 
   Future<void> loadProducts() async {
@@ -22,10 +23,8 @@ class ProductViewModel with ChangeNotifier {
     }
 
     Map<String, dynamic> data = jsonDecode(response.body);
-    data.forEach((key, productData){
-      _items.add(
-        Product.fromMap(key, productData)
-      );
+    data.forEach((key, productData) {
+      _items.add(Product.fromMap(key, productData));
     });
 
     notifyListeners();
@@ -67,6 +66,16 @@ class ProductViewModel with ChangeNotifier {
     int index = _items.indexWhere((product) => product.id == updatedProduct.id);
 
     if (index >= 0) {
+      await _httpService.patch(
+        uri: '${updatedProduct.id}.json',
+        bodyJson: jsonEncode({
+          'name': updatedProduct.title,
+          'description': updatedProduct.description,
+          'price': updatedProduct.price,
+          'imageUrl': updatedProduct.urlImage,
+        }),
+      );
+
       _items[index] = updatedProduct;
       notifyListeners();
     }

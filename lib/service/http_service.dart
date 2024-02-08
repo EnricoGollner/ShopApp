@@ -11,7 +11,7 @@ class HttpService implements IHttpService {
   }
 
   @override
-  Future post({required String bodyJson, required String uriPath}) async {
+  Future post({required String uriPath, required String bodyJson}) async {
     final http.Response response = await http.post(
       Uri.parse("${Config.baseUrl}/$uriPath"), // we MUST finish the URI with .json
       body: bodyJson,
@@ -21,4 +21,12 @@ class HttpService implements IHttpService {
       throw const HttpException('Could not save product.');
     }
   }
+  
+  @override
+  Future patch({required String uri, required String bodyJson}) {
+    // TODO: implement patch
+    throw UnimplementedError();
+  }
+
+  
 }
