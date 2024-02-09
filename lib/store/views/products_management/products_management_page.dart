@@ -7,8 +7,8 @@ import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/store/viewModel/product_view_model.dart';
 import 'package:shop/store/views/products_management/components/product_item_card.dart';
 
-class ProductsManagementPage extends StatelessWidget {
-  const ProductsManagementPage({super.key});
+class ProductsManagementScreen extends StatelessWidget {
+  const ProductsManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

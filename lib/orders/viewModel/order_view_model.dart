@@ -46,7 +46,7 @@ class OrderViewModel with ChangeNotifier {
     _orders.insert(
       0,
       Order(
-        id: jsonDecode(response.body)['title'],
+        id: jsonDecode(response.body)['name'],
         total: newCart.totalAmount,
         date: date,
         products: newCart.items.values.toList(),
