@@ -59,7 +59,7 @@ class CartItemCard extends StatelessWidget {
                 ),
               ),
             ),
-            title: Text(cartItem.name),
+            title: Text(cartItem.title),
             subtitle: Text(
                 'Total: ${Formatters.doubleToCurrency(cartItem.price * cartItem.quantity)}'),
             trailing: Text('${cartItem.quantity}x'),

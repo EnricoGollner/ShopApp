@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/cart/viewModel/cart_view_model.dart';
+import 'package:shop/cart/views/components/buy_button.dart';
 import 'package:shop/core/utils/formatters.dart';
-import 'package:shop/orders/viewModel/order_view_model.dart';
 import 'package:shop/cart/views/components/cart_item_card.dart';
 
-class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+class CartScreen extends StatelessWidget {
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class CartPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  CardButton(cartProvider: cartProvider),
+                  BuyButton(cartProvider: cartProvider),
                 ],
               ),
             ),
@@ -57,40 +57,6 @@ class CartPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CardButton extends StatefulWidget {
-  const CardButton({
-    super.key,
-    required this.cartProvider,
-  });
-
-  final CartViewModel cartProvider;
-
-  @override
-  State<CardButton> createState() => _CardButtonState();
-}
-
-class _CardButtonState extends State<CardButton> {
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return _isLoading ? const CircularProgressIndicator() : TextButton(
-      onPressed: widget.cartProvider.items.isEmpty ? null : () async {
-        setState(() => _isLoading = true);
-        await Provider.of<OrderViewModel>(context, listen: false).addOrder(widget.cartProvider);
-        widget.cartProvider.clear();
-        setState(() => _isLoading = false);
-      },
-      child: Text(
-        'COMPRAR',
-        style: TextStyle(
-          color: Theme.of(context).primaryColor,
-        ),
       ),
     );
   }

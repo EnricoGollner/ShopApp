@@ -32,7 +32,7 @@ class CartViewModel with ChangeNotifier {
         () => CartItem(
           id: Random().nextDouble().toString(),
           productId: newProduct.id,
-          name: newProduct.title,
+          title: newProduct.title,
           quantity: 1,
           price: newProduct.price,
         ),

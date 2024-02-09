@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shop/core/exceptions/http_exception.dart';
-import 'package:shop/service/http_service.dart';
+import 'package:shop/service/store_service.dart';
 import 'package:shop/store/models/product.dart';
 
 class ProductViewModel with ChangeNotifier {
@@ -13,7 +13,7 @@ class ProductViewModel with ChangeNotifier {
   List<Product> get items => [..._items];
   List<Product> get favoriteItems => _items.where((item) => item.isFavorite).toList();
 
-  final HTTPService _httpService = HTTPService();
+  final StoreService _httpService = StoreService();
 
   Future<void> loadProducts() async {
     _items.clear();
@@ -30,13 +30,7 @@ class ProductViewModel with ChangeNotifier {
   }
 
   Future<void> saveProduct(Map<String, dynamic> data) async {
-    final Product product = Product(
-      id: data['id'] ?? Random().nextDouble().toString(),
-      title: data['name'],
-      description: data['description'],
-      price: data['price'],
-      urlImage: data['urlImage'],
-    );
+    final Product product = Product.fromMap(data['id'] ?? Random().nextDouble().toString(), data);
 
     if (data['id'] != null) {
       updateProduct(product);
@@ -47,16 +41,10 @@ class ProductViewModel with ChangeNotifier {
 
   Future<void> addProduct(Product newProduct) async {
     final Response response = await _httpService.post(
-        bodyJson: jsonEncode({
-          "name": newProduct.title,
-          "description": newProduct.description,
-          "price": newProduct.price,
-          "imageUrl": newProduct.urlImage,
-          "isFavorite": newProduct.isFavorite,
-        }),
+        bodyJson: jsonEncode(newProduct.toMap()),
         uriPath: 'products.json');
 
-    final id = jsonDecode(response.body)['name'];
+    final id = jsonDecode(response.body)['title'];
     _items.add(newProduct.copyWith(id: id));
     notifyListeners();
   }
@@ -68,10 +56,10 @@ class ProductViewModel with ChangeNotifier {
       await _httpService.patch(
         uri: '${updatedProduct.id}.json',
         bodyJson: jsonEncode({
-          'name': updatedProduct.title,
+          'title': updatedProduct.title,
           'description': updatedProduct.description,
           'price': updatedProduct.price,
-          'imageUrl': updatedProduct.urlImage,
+          'urlImage': updatedProduct.urlImage,
         }),
       );
 

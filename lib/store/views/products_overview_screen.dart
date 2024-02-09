@@ -5,17 +5,17 @@ import 'package:shop/core/components/custom_alert_dialog.dart';
 import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/core/enums/filter_options.dart';
 import 'package:shop/core/components/app_drawer.dart';
-import 'package:shop/store/viewModel/product/product_view_model.dart';
+import 'package:shop/store/viewModel/product_view_model.dart';
 import 'package:shop/store/views/components/product_grid.dart';
 
-class ProductsOverviewPage extends StatefulWidget {
-  const ProductsOverviewPage({super.key});
+class ProductsOverviewScreen extends StatefulWidget {
+  const ProductsOverviewScreen({super.key});
 
   @override
-  State<ProductsOverviewPage> createState() => _ProductsOverviewPageState();
+  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
 }
 
-class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _showFavoriteOnly = false;
   bool _isLoading = true;
 

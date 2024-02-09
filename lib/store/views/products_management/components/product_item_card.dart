@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ProductItemCard extends StatelessWidget {
-  final String imageUrl;
+  final String urlImage;
   final String title;
   final void Function() onEdit;
   final Future<void> Function() onDelete;
 
   const ProductItemCard({
     super.key,
-    required this.imageUrl,
+    required this.urlImage,
     required this.title,
     required this.onEdit,
     required this.onDelete,
@@ -18,7 +18,7 @@ class ProductItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(imageUrl),
+        backgroundImage: NetworkImage(urlImage),
       ),
       title: Text(title),
       trailing: FittedBox(
