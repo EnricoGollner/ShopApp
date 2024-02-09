@@ -5,11 +5,11 @@ import 'package:http/http.dart';
 import 'package:shop/cart/viewModel/cart_view_model.dart';
 import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/orders/models/order.dart';
-import 'package:shop/service/http_service.dart';
+import 'package:shop/service/store_service.dart';
 
 class OrderViewModel with ChangeNotifier {
   final List<Order> _orders = [];
-  final HTTPService _httpService = HTTPService();
+  final StoreService _httpService = StoreService();
 
   final DateTime date = DateTime.now();
   List<Order> get items => [..._orders];

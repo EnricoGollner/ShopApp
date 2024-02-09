@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/authentication/viewModels/auth_view_model.dart';
+import 'package:shop/authentication/views/authentication_screen.dart';
 import 'package:shop/cart/viewModel/cart_view_model.dart';
 import 'package:shop/core/theme/styles.dart';
 import 'package:shop/core/utils/app_routes.dart';
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => ProductViewModel()),
         ChangeNotifierProvider(create: (context) => CartViewModel()),
         ChangeNotifierProvider(create: (context) => OrderViewModel()),
@@ -37,6 +40,7 @@ class MyApp extends StatelessWidget {
         scaffoldMessengerKey: scaffoldMessengerKey,
         theme: Styles.setMaterial3Theme(),
         routes: {
+          AppRoutes.AUTHENTICATION: (_) => const AuthenticationScreen(),
           AppRoutes.HOME: (_) => const ProductsOverviewScreen(),
           AppRoutes.PRODUCT_DETAIL: (_) => const ProductDetailScreen(),
           AppRoutes.CART: (_) => const CartScreen(),

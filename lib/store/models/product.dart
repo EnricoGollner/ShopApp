@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import 'package:shop/core/exceptions/http_exception.dart';
-import 'package:shop/service/http_service.dart';
+import 'package:shop/service/store_service.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -29,7 +29,7 @@ class Product with ChangeNotifier {
   Future<void> toggleFavorite() async {
     _toggleFavorite();
 
-    final Response response = await HTTPService().delete(uri: '$id.json');
+    final Response response = await StoreService().delete(uri: '$id.json');
 
     if (response.statusCode >= 400) {
       _toggleFavorite();
