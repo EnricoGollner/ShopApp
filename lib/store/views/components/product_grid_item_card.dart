@@ -11,7 +11,8 @@ class ProductGridItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Product productProvider = Provider.of<Product>(context);
-    final CartViewModel cartProvider = Provider.of<CartViewModel>(context, listen: false);
+    final CartViewModel cartProvider =
+        Provider.of<CartViewModel>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -46,7 +47,8 @@ class ProductGridItemCard extends StatelessWidget {
                 BoxSnackBar.success(
                   message: 'Product added successfully to the cart',
                   actionLabel: 'Undo',
-                  action: () => cartProvider.removeSingleItem(productProvider.id),
+                  action: () =>
+                      cartProvider.removeSingleItem(productProvider.id),
                 ),
               );
             },
@@ -59,9 +61,13 @@ class ProductGridItemCard extends StatelessWidget {
             AppRoutes.PRODUCT_DETAIL,
             arguments: productProvider,
           ),
-          child: Image.network(
-            productProvider.urlImage,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: productProvider.id,
+            child: FadeInImage(
+              placeholder: const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(productProvider.urlImage),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

@@ -28,40 +28,44 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               ),
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  width: 320,
-                  padding: const EdgeInsets.all(10),
-                  transform: Matrix4.rotationZ(-8 * pi / 180),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.red.shade900,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 8,
-                          color: Colors.black26,
-                          offset: Offset(0, 2),
+          Center(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      width: 320,
+                      padding: const EdgeInsets.all(10),
+                      transform: Matrix4.rotationZ(-8 * pi / 180),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.red.shade900,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              blurRadius: 8,
+                              color: Colors.black26,
+                              offset: Offset(0, 2),
+                            ),
+                          ]),
+                      child: Text(
+                        'MY STORE',
+                        style: TextStyle(
+                          fontSize: 45,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Anton',
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
-                      ]),
-                  child: Text(
-                    'MY STORE',
-                    style: TextStyle(
-                      fontSize: 45,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Anton',
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
-                  ),
+                    const AuthenticationForm(),
+                  ],
                 ),
-                const AuthenticationForm(),
-              ],
+              ),
             ),
           ),
         ],
