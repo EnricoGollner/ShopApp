@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shop/core/utils/app_routes.dart';
-import 'package:shop/core/utils/custom_route.dart';
-import 'package:shop/orders/views/orders_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -18,13 +16,13 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.shop),
             title: const Text('Store'),
-            onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.HOME),
+            onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.SPLASHSCREEN),
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.payment),
             title: const Text('Orders'),
-            onTap: () => Navigator.pushReplacement(context, CustomRoute(builder: (context) => const OrdersScreen())),
+            onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.ORDERS),
           ),
           const Divider(),
           ListTile(

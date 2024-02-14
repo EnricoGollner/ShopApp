@@ -8,6 +8,7 @@ import 'package:shop/service/store_service.dart';
 import 'package:shop/store/models/product.dart';
 
 class ProductViewModel with ChangeNotifier {
+  late String token;
   final List<Product> _items = [];
 
   List<Product> get items => [..._items];
@@ -15,10 +16,16 @@ class ProductViewModel with ChangeNotifier {
 
   final StoreService _httpService = StoreService();
 
+  ProductViewModel(String token, List<Product> items) {
+    token = token;
+    _items.clear();
+    _items.addAll(items);
+  }
+
   Future<void> loadProducts() async {
     _items.clear();
 
-    final Response response = await _httpService.get(uri: 'products.json');
+    final Response response = await _httpService.get(uri: 'products.json?auth=...');
     if (response.body == 'null' || response.statusCode >= 400) {
       throw HTTPException(message: 'Error requesting list of products!', statusCode: response.statusCode);
     }
