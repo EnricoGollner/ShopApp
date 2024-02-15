@@ -23,8 +23,7 @@ class CartViewModel with ChangeNotifier {
     if (_items.containsKey(newProduct.id)) {
       _items.update(
         newProduct.id,
-        (existingItem) =>
-            existingItem.copyWith(quantity: existingItem.quantity + 1),
+        (existingItem) => existingItem.copyWith(quantity: existingItem.quantity + 1),
       );
     } else {
       _items.putIfAbsent(

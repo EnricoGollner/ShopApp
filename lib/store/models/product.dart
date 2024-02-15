@@ -26,10 +26,10 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String token) async {
     _toggleFavorite();
 
-    final Response response = await StoreService().delete(uri: '$id.json');
+    final Response response = await StoreService().delete(uri: '$id.json?auth=$token');
 
     if (response.statusCode >= 400) {
       _toggleFavorite();

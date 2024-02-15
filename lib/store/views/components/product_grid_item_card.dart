@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/authentication/viewModels/auth_view_model.dart';
 import 'package:shop/cart/viewModel/cart_view_model.dart';
 import 'package:shop/core/components/custom_snack_bar.dart';
 import 'package:shop/core/utils/app_routes.dart';
@@ -11,8 +12,7 @@ class ProductGridItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Product productProvider = Provider.of<Product>(context);
-    final CartViewModel cartProvider =
-        Provider.of<CartViewModel>(context, listen: false);
+    final CartViewModel cartProvider = Provider.of<CartViewModel>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -26,7 +26,7 @@ class ProductGridItemCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: () async {
-                await product.toggleFavorite().catchError((error) {
+                await product.toggleFavorite(Provider.of<AuthViewModel>(context, listen: false).token ?? '').catchError((error) {
                   showSnackBar(
                     context,
                     BoxSnackBar.error(message: error.toString()),

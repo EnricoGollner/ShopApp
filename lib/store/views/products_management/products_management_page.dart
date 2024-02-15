@@ -64,10 +64,8 @@ class ProductsManagementScreen extends StatelessWidget {
                       }).then((value) async {
                     if (value ?? false) {
                       try {
-                        await Provider.of<ProductViewModel>(context)
-                            .deleteProduct(productId: product.id);
-                        productListProvider.deleteProduct(
-                            productId: product.id);
+                        await Provider.of<ProductViewModel>(context, listen: false).deleteProduct(productId: product.id);
+                        productListProvider.deleteProduct(productId: product.id);
                       } on HTTPException catch (error) {
                         // ignore: use_build_context_synchronously
                         showSnackBar(context,

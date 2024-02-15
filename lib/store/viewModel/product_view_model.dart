@@ -48,7 +48,7 @@ class ProductViewModel with ChangeNotifier {
   Future<void> addProduct(Product newProduct) async {
     final Response response = await _httpService.post(
         bodyJson: jsonEncode(newProduct.toMap()),
-        uriPath: 'products.json');
+        uriPath: 'products.json?auth=$token');
 
     final id = jsonDecode(response.body)['title'];
     _items.add(newProduct.copyWith(id: id));
@@ -60,7 +60,7 @@ class ProductViewModel with ChangeNotifier {
 
     if (index >= 0) {
       await _httpService.patch(
-        uri: '${updatedProduct.id}.json',
+        uri: '${updatedProduct.id}.json?auth=$token',
         bodyJson: jsonEncode({
           'title': updatedProduct.title,
           'description': updatedProduct.description,
@@ -83,7 +83,7 @@ class ProductViewModel with ChangeNotifier {
       _items.removeWhere((product) => product.id == productId);
       notifyListeners();
 
-      final Response response = await _httpService.delete(uri: '$productId.json');
+      final Response response = await _httpService.delete(uri: '$productId.json?auth=$token');
 
       if (response.statusCode >= 400) {
         _items.insert(index, product);

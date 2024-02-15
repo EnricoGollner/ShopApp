@@ -8,6 +8,7 @@ import 'package:shop/cart/viewModel/cart_view_model.dart';
 import 'package:shop/core/theme/styles.dart';
 import 'package:shop/core/utils/app_routes.dart';
 import 'package:shop/cart/views/cart_screen.dart';
+import 'package:shop/orders/models/order.dart';
 import 'package:shop/orders/viewModel/order_view_model.dart';
 import 'package:shop/store/models/product.dart';
 import 'package:shop/store/viewModel/product_view_model.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProxyProvider<AuthViewModel, ProductViewModel>(  // A proxy provider is a provider that depends on another provider
+        ChangeNotifierProxyProvider<AuthViewModel, ProductViewModel>(
+          // A proxy provider is a provider that depends on another provider
           create: (context) => ProductViewModel('', List<Product>.empty()),
           update: (context, auth, previousProductViewModel) {
             return ProductViewModel(
@@ -41,8 +43,13 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        ChangeNotifierProvider(create: (context) => CartViewModel()),
-        ChangeNotifierProvider(create: (context) => OrderViewModel()),
+        ChangeNotifierProxyProvider<AuthViewModel, OrderViewModel>(
+          create: (context) => OrderViewModel('', List<Order>.empty()),
+          update: (context, auth, previous) => OrderViewModel(auth.token ?? '', previous?.items ?? List<Order>.empty()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CartViewModel(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -55,8 +62,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.PRODUCT_DETAIL: (_) => const ProductDetailScreen(),
           AppRoutes.CART: (_) => const CartScreen(),
           AppRoutes.ORDERS: (_) => const OrdersScreen(),
-          AppRoutes.PRODUCTS_MANAGEMENT: (_) =>
-              const ProductsManagementScreen(),
+          AppRoutes.PRODUCTS_MANAGEMENT: (_) => const ProductsManagementScreen(),
           AppRoutes.PRODUCTS_ADD: (_) => const ProductAddScreen(),
         },
       ),
