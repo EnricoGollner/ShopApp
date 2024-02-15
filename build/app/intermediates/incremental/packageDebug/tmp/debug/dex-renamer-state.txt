@@ -1,4 +1,4 @@
-#Wed Feb 14 17:19:09 BRT 2024
+#Thu Feb 15 08:25:52 BRT 2024
 base.0=C\:\\Users\\Mobile01\\Documents\\Projetos e Certificados\\ShopApp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

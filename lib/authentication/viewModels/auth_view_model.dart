@@ -13,8 +13,8 @@ class AuthViewModel extends ChangeNotifier {
   DateTime? _expiryDate;
 
   bool get isAuth {
-    final bool isExpired = _expiryDate?.isAfter(DateTime.now()) ?? false;
-    return _token != null && isExpired;
+    final bool isValid = _expiryDate?.isAfter(DateTime.now()) ?? false;
+    return _token != null && isValid;
   }
 
   String? get token {
@@ -43,8 +43,7 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> login({required String email, required String password}) async {
     final Authentication auth =
         Authentication(email: email, password: password);
-    final http.Response response = await authenticationService.authenticate(
-        authentication: auth, urlMethod: 'signInWithPassword');
+    final http.Response response = await authenticationService.authenticate(authentication: auth, urlMethod: 'signInWithPassword');
 
     final body = jsonDecode(response.body);
 

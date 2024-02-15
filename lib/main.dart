@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProxyProvider<AuthViewModel, ProductViewModel>(  // Estabilishing comunication between AuthViewModel and ProductViewModel
-          create: (context) => ProductViewModel('', []),
+        ChangeNotifierProxyProvider<AuthViewModel, ProductViewModel>(  // A proxy provider is a provider that depends on another provider
+          create: (context) => ProductViewModel('', List<Product>.empty()),
           update: (context, auth, previousProductViewModel) {
             return ProductViewModel(
               auth.token ?? '',
