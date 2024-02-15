@@ -107,7 +107,7 @@ class BoxSnackBar extends StatelessWidget {
                 child: Text(
                   message,
                   maxLines: 5,
-                  style: const TextStyle(color: colorOnPrimary),
+                  style: TextStyle(color: type == SnackBarType.error ? colorError : colorOnPrimary),
                 ),
               ),
             ),

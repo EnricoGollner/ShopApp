@@ -6,11 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:shop/authentication/model/authentication.dart';
 import 'package:shop/authentication/services/authentication_service.dart';
 import 'package:shop/core/exceptions/auth_exception.dart';
+import 'package:shop/core/utils/data_store.dart';
 
 class AuthViewModel extends ChangeNotifier {
   String? _token;
   String? _email;
-  String? _uid;
+  String? _userId;
   DateTime? _expiryDate;
   Timer? _logoutTimer;
 
@@ -28,7 +29,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   String? get userId {
-    return isAuth ? _uid : null;
+    return isAuth ? _userId : null;
   }
 
   final AuthenticationService authenticationService = AuthenticationService();
@@ -42,40 +43,72 @@ class AuthViewModel extends ChangeNotifier {
     if (response.statusCode == 204) {}
   }
 
-  Future<AuthException?> login({required String email, required String password}) async {
-    final Authentication auth = Authentication(email: email, password: password);
-    final http.Response response = await authenticationService.authenticate(authentication: auth, urlMethod: 'signInWithPassword');
+  Future<AuthException?> login(
+      {required String email, required String password}) async {
+    final Authentication auth =
+        Authentication(email: email, password: password);
 
-    final body = jsonDecode(response.body);
+    try {
+      final http.Response response = await authenticationService.authenticate(authentication: auth, urlMethod: 'signInWithPassword');
+      final body = jsonDecode(response.body);
 
-    if (body['error'] != null) {
-      return AuthException(key: body['error']['message']);
-    } else {
-      _token = body['idToken'];
-      _email = body['email'];
-      _uid = body['localId'];
+      if (body['error'] != null) {
+        return AuthException(key: body['error']['message']);
+      } else {
+        _token = body['idToken'];
+        _email = body['email'];
+        _userId = body['localId'];
 
-      _expiryDate = DateTime.now().add(
-        Duration(
-          seconds: int.parse(
-            body['expiresIn'],
+        _expiryDate = DateTime.now().add(
+          Duration(
+            seconds: int.parse(
+              body['expiresIn'],
+            ),
           ),
-        ),
-      );
+        );
 
-      _autoLogout();
-      notifyListeners();
+        DataStore.saveMap(key: 'userData', value: {
+          'token': _token,
+          'email': _email,
+          'userId': _userId,
+          'expiryDate': _expiryDate!.toIso8601String()
+        });
+
+        _autoLogout();
+        notifyListeners();
+      }
+    } catch (_) {
+      return AuthException(key: '');
     }
-
-    return null;
   }
 
-  void logout() {
+  Future<void> tryAutoLogin() async {
+    if (isAuth) return;
+
+    final Map<String, dynamic> userData =await DataStore.getMap(key: 'userData');
+    if (userData.isEmpty) return;
+
+    final DateTime expiryDate = DateTime.parse(userData['expiryDate']);
+    if (expiryDate.isBefore(DateTime.now())) return; // Token expired
+
+    _token = userData['token'];
+    _email = userData['email'];
+    _userId = userData['userId'];
+    _expiryDate = expiryDate;
+
+    _autoLogout();
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
     _token = null;
     _email = null;
-    _uid = null;
+    _userId = null;
     _expiryDate = null;
-    notifyListeners();
+    _clearAutoLogoutTimer();
+    DataStore.remove(key: 'userData').then((_) {
+      notifyListeners();
+    });
   }
 
   void _clearAutoLogoutTimer() {
@@ -85,7 +118,8 @@ class AuthViewModel extends ChangeNotifier {
 
   void _autoLogout() {
     _clearAutoLogoutTimer();
-    final int timetToLogout = _expiryDate?.difference(DateTime.now()).inSeconds ?? 0;
+    final int timetToLogout =
+        _expiryDate?.difference(DateTime.now()).inSeconds ?? 0;
     _logoutTimer = Timer(Duration(seconds: timetToLogout), logout);
   }
 }

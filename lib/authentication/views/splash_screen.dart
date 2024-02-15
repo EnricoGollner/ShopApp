@@ -11,8 +11,23 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthViewModel authProvider = Provider.of<AuthViewModel>(context);
 
-    return authProvider.isAuth
-        ? const ProductsOverviewScreen()
-        : const AuthenticationScreen();
+    return FutureBuilder(
+      future: authProvider.tryAutoLogin(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.error != null) {
+          return const Center(
+            child: Text('Error ocurred!'),
+          );
+        } else {
+          return authProvider.isAuth
+              ? const ProductsOverviewScreen()
+              : const AuthenticationScreen();
+        }
+      },
+    );
   }
 }
