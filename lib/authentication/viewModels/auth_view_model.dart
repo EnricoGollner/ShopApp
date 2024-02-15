@@ -25,7 +25,7 @@ class AuthViewModel extends ChangeNotifier {
     return isAuth ? _email : null;
   }
 
-  String? get uid {
+  String? get userId {
     return isAuth ? _uid : null;
   }
 
@@ -40,15 +40,14 @@ class AuthViewModel extends ChangeNotifier {
     if (response.statusCode == 204) {}
   }
 
-  Future<void> login({required String email, required String password}) async {
-    final Authentication auth =
-        Authentication(email: email, password: password);
+  Future<AuthException?> login({required String email, required String password}) async {
+    final Authentication auth = Authentication(email: email, password: password);
     final http.Response response = await authenticationService.authenticate(authentication: auth, urlMethod: 'signInWithPassword');
 
     final body = jsonDecode(response.body);
 
     if (body['error'] != null) {
-      throw AuthException(key: body['error']['message']);
+      return AuthException(key: body['error']['message']);
     } else {
       _token = body['idToken'];
       _email = body['email'];
@@ -61,8 +60,17 @@ class AuthViewModel extends ChangeNotifier {
           ),
         ),
       );
-
       notifyListeners();
     }
+
+    return null;
+  }
+
+  void logout() {
+    _token = null;
+    _email = null;
+    _uid = null;
+    _expiryDate = null;
+    notifyListeners();
   }
 }

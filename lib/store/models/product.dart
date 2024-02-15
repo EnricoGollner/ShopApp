@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
-import 'package:shop/core/exceptions/http_exception.dart';
 import 'package:shop/service/store_service.dart';
 
 class Product with ChangeNotifier {
@@ -21,22 +22,27 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
+  final StoreService _httpService = StoreService();
+
   void _toggleFavorite() {
     isFavorite = !isFavorite;
     notifyListeners();
   }
 
-  Future<void> toggleFavorite(String token) async {
-    _toggleFavorite();
-
-    final Response response = await StoreService().delete(uri: '$id.json?auth=$token');
-
-    if (response.statusCode >= 400) {
+  Future<void> toggleFavorite(String token, String userId) async {
+    try {
       _toggleFavorite();
-      throw HTTPException(
-        message: "Couldn't add this product to your favorites list",
-        statusCode: response.statusCode,
+
+      final Response response = await _httpService.put(
+        uri: 'userFavorites/$userId/$id.json?auth=$token',
+        bodyJson: jsonEncode(isFavorite),
       );
+
+      if (response.statusCode >= 400) {
+        _toggleFavorite();
+      }
+    } catch (_) {
+      _toggleFavorite();
     }
   }
 
@@ -46,7 +52,7 @@ class Product with ChangeNotifier {
     String? description,
     double? price,
     String? urlImage,
-    bool? isFavorite,
+    bool? isFavorite
   }) {
     return Product(
       id: id ?? this.id,
@@ -65,7 +71,6 @@ class Product with ChangeNotifier {
       'description': description,
       'price': price,
       'urlImage': urlImage,
-      'isFavorite': isFavorite,
     };
   }
 
@@ -76,7 +81,6 @@ class Product with ChangeNotifier {
       description: map['description'] as String,
       price: map['price'] as double,
       urlImage: map['urlImage'] as String,
-      isFavorite: map['isFavorite'] ?? false,
     );
   }
 }

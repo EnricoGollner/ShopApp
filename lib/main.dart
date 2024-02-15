@@ -35,17 +35,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProxyProvider<AuthViewModel, ProductViewModel>(
           // A proxy provider is a provider that depends on another provider
-          create: (context) => ProductViewModel('', List<Product>.empty()),
+          create: (context) => ProductViewModel(),
           update: (context, auth, previousProductViewModel) {
             return ProductViewModel(
               auth.token ?? '',
+              auth.userId ?? '',
               previousProductViewModel?.items ?? List<Product>.empty(),
             );
           },
         ),
         ChangeNotifierProxyProvider<AuthViewModel, OrderViewModel>(
-          create: (context) => OrderViewModel('', List<Order>.empty()),
-          update: (context, auth, previous) => OrderViewModel(auth.token ?? '', previous?.items ?? List<Order>.empty()),
+          create: (context) => OrderViewModel(),
+          update: (context, auth, previous) => OrderViewModel(auth.token ?? '', auth.userId ?? '', previous?.items ?? List<Order>.empty()),
         ),
         ChangeNotifierProvider(
           create: (context) => CartViewModel(),
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
         scaffoldMessengerKey: scaffoldMessengerKey,
         theme: Styles.setMaterial3Theme(),
         routes: {
-          AppRoutes.SPLASHSCREEN: (_) => const SplashScreen(),
+          AppRoutes.AUTH_OR_HOME: (_) => const SplashScreen(),
           AppRoutes.AUTHENTICATION: (_) => const AuthenticationScreen(),
           AppRoutes.PRODUCT_DETAIL: (_) => const ProductDetailScreen(),
           AppRoutes.CART: (_) => const CartScreen(),

@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 class AppRoutes {
-  static const SPLASHSCREEN = '/';
+  static const AUTH_OR_HOME = '/';
   static const AUTHENTICATION = '/authentication';
   static const PRODUCT_DETAIL = '/product-detail';
   static const CART = '/cart';

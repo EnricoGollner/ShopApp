@@ -11,6 +11,7 @@ class ProductGridItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthViewModel authProvider = Provider.of<AuthViewModel>(context, listen: false);
     final Product productProvider = Provider.of<Product>(context);
     final CartViewModel cartProvider = Provider.of<CartViewModel>(context, listen: false);
 
@@ -26,7 +27,7 @@ class ProductGridItemCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: () async {
-                await product.toggleFavorite(Provider.of<AuthViewModel>(context, listen: false).token ?? '').catchError((error) {
+                await product.toggleFavorite(authProvider.token ?? '', authProvider.userId ?? '').catchError((error) {
                   showSnackBar(
                     context,
                     BoxSnackBar.error(message: error.toString()),

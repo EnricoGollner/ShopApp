@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/authentication/viewModels/auth_view_model.dart';
+import 'package:shop/core/components/custom_snack_bar.dart';
 import 'package:shop/core/components/custom_text_field.dart';
 import 'package:shop/core/enums/auth_mode.dart';
+import 'package:shop/core/exceptions/auth_exception.dart';
 import 'package:shop/core/utils/validator.dart';
 
 class AuthenticationForm extends StatefulWidget {
@@ -163,15 +165,13 @@ class _AuthenticationFormState extends State<AuthenticationForm>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       _formKey.currentState!.save();
-      AuthViewModel authProvider =
-          Provider.of<AuthViewModel>(context, listen: false);
+      AuthViewModel authProvider = Provider.of<AuthViewModel>(context, listen: false);
 
       if (_authMode == AuthMode.login) {
-        await authProvider.login(
-            email: _authData['email']!, password: _authData['password']!);
+        final AuthException? response = await authProvider.login(email: _authData['email']!, password: _authData['password']!);
+        if (response != null && mounted) showSnackBar(context, BoxSnackBar.error(message: response.toString()));
       } else {
-        await authProvider.signup(
-            email: _authData['email']!, password: _authData['password']!);
+        await authProvider.signup(email: _authData['email']!, password: _authData['password']!);
       }
 
       setState(() => _isLoading = false);

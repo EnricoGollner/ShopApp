@@ -11,9 +11,11 @@ class StoreService implements IStoreService {
   }
 
   @override
-  Future<http.Response> post({required String uriPath, required String bodyJson}) async {
+  Future<http.Response> post(
+      {required String uriPath, required String bodyJson}) async {
     final http.Response response = await http.post(
-      Uri.parse("${Config.baseUrl}/$uriPath"), // we MUST finish the URI with .json
+      Uri.parse(
+          "${Config.baseUrl}/$uriPath"), // we MUST finish the URI with .json
       body: bodyJson,
     );
 
@@ -23,12 +25,22 @@ class StoreService implements IStoreService {
 
     return response;
   }
-  
+
   @override
-  Future<http.Response> patch({required String uri, required String bodyJson}) async {
+  Future<http.Response> put(
+      {required String uri, required String bodyJson}) async {
+    return await http.put(
+      Uri.parse('${Config.baseUrl}$uri'),
+      body: bodyJson,
+    );
+  }
+
+  @override
+  Future<http.Response> patch(
+      {required String uri, required String bodyJson}) async {
     return await http.patch(Uri.parse('${Config.baseUrl}$uri'));
   }
-  
+
   @override
   Future<http.Response> delete({required String uri}) async {
     return await http.delete(Uri.parse('${Config.baseUrl}$uri'));

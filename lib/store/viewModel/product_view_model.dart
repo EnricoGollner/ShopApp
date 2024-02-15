@@ -9,29 +9,35 @@ import 'package:shop/store/models/product.dart';
 
 class ProductViewModel with ChangeNotifier {
   String token;
-  final List<Product> _items = [];
+  final String _userId;
+  final List<Product> _items;
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems => _items.where((item) => item.isFavorite).toList();
 
   final StoreService _httpService = StoreService();
 
-  ProductViewModel(this.token, List<Product> items) {
-    _items.clear();
-    _items.addAll(items);
-  }
+  ProductViewModel([this.token = '', this._userId = '', this._items = const []]);
 
   Future<void> loadProducts() async {
     _items.clear();
 
-    final Response response = await _httpService.get(uri: 'products.json?auth=$token');
-    if (response.body == 'null' || response.statusCode >= 400) {
-      throw HTTPException(message: 'Error requesting list of products!', statusCode: response.statusCode);
+    final Response productsResponse = await _httpService.get(uri: 'products.json?auth=$token');
+    if (productsResponse.body == 'null' || productsResponse.statusCode >= 400) {
+      throw HTTPException(message: 'Error requesting list of products!', statusCode: productsResponse.statusCode);
     }
 
-    jsonDecode(response.body).forEach((key, productData) {
-      _items.add(Product.fromMap(key, productData));
+    final Response favoritesResponse = await StoreService().get(
+      uri: 'userFavorites/$_userId.json?auth=$token',
+    );
+
+    Map<String, dynamic> favoritesData = favoritesResponse.body == 'null' ? {} : jsonDecode(favoritesResponse.body);
+  
+    jsonDecode(productsResponse.body).forEach((productId, productData) {
+      final bool isFavorite = favoritesData[productId] ?? false;
+      _items.add(Product.fromMap(productId, productData).copyWith(isFavorite: isFavorite));
     });
+
     notifyListeners();
   }
 

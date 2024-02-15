@@ -9,6 +9,7 @@ import 'package:shop/service/store_service.dart';
 
 class OrderViewModel with ChangeNotifier {
   final String _token;
+  final String _userId;
   List<Order> _orders = [];
   final StoreService _httpService = StoreService();
 
@@ -17,16 +18,17 @@ class OrderViewModel with ChangeNotifier {
 
   int get itemsCount => _orders.length;
 
-  OrderViewModel(this._token, this._orders);
+  OrderViewModel([this._token = '', this._userId = '', this._orders = const []]);
 
   Future<void> loadOrders() async {
-    // _orders.clear();
     List<Order> orders = [];
+    
+    final Response response = await _httpService.get(uri: 'orders/$_userId.json?auth=$_token');
 
-    final Response response = await _httpService.get(uri: 'orders.json?auth=$_token');
-
-    if (response.body == 'null' || response.statusCode >= 400) {
+    if (response.statusCode >= 400) {
       throw HTTPException(statusCode: response.statusCode, message: 'Error getting orders!');
+    } else if (response.body == 'null' ) {
+      throw HTTPException(message: 'No orders registered yet!', statusCode: 200);
     }
 
     jsonDecode(response.body).forEach((id, order) {
@@ -39,7 +41,7 @@ class OrderViewModel with ChangeNotifier {
 
   Future<void> addOrder(CartViewModel newCart) async {
     final Response response = await _httpService.post(
-        uriPath: 'orders.json?auth=$_token',
+        uriPath: 'orders/$_userId.json?auth=$_token',
         bodyJson: jsonEncode({
           'total': newCart.totalAmount,
           'date': date.toIso8601String(),

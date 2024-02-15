@@ -19,8 +19,7 @@ class OrdersScreen extends StatelessWidget {
         future: Provider.of<OrderViewModel>(context, listen: false).loadOrders().catchError((error) {
           showDialog(
             context: context,
-            builder: (context) => CustomAlertDialog(
-                title: 'Error ocurred', contentText: 'Error: $error'),
+            builder: (context) => CustomAlertDialog(title: 'Error ocurred', contentText: 'Error: $error'),
           );
         }),
         builder: (context, snapshot) {
